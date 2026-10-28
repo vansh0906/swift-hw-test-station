@@ -1,0 +1,38 @@
+[1  Production run: 200 simulated IMU-BOARD-A boards, 8 parallel stations]
+  every board is served on its own pseudo-terminal and tested through the real serial-port code
+  units tested 200: good 160 (of which 20 on a noisy link), defective 40
+  yield 80.0 %, false failures 0, escapes 0
+  link: 60 CRC errors and 75 retries, 3 stale replies rejected
+  wall time 4.6 s = 156383 units per hour
+
+[2  Defects: was each one caught at the right step?]
+  fault             units caught  first failing step (expected)
+  wrong_product         4      4  identify (identify)
+  old_firmware          4      4  firmware_version (firmware_version)
+  low_voltage           4      4  supply_voltage (supply_voltage)
+  over_temp             4      4  temperature (temperature)
+  dead_accel            3      3  accel_gravity (accel_gravity)
+  stuck_accel           3      3  accel_noise (accel_noise)
+  noisy_accel           3      3  accel_noise (accel_noise)
+  gyro_bias             3      3  gyro_bias (gyro_bias)
+  selftest_fail         3      3  selftest (selftest)
+  slow_response         3      3  identify (identify)
+  silent                3      3  identify (identify)
+  garbage               3      3  identify (identify)
+
+[3  Unresponsive boards: time to a verdict]
+  6 silent or slow boards; slowest verdict 806 ms (budget 1300 ms = 200 ms x 4 attempts + 0.5 s)
+
+[4  Station scaling: the same first 48 units on 1 station vs. 8 stations]
+  1 station 8.95 s, 8 stations 1.93 s: 4.6x faster; identical verdicts: yes
+
+ID   Requirement                                 Result              Target        Status
+R1   Defective boards caught (escapes = 0)       40/40               all           PASS
+R2   Good boards passed (false failures = 0)     160/160             all           PASS
+R3   Failing step named correctly                40/40               all           PASS
+R4   Noisy-link boards recovered by CRC + retry  20/20, 60 CRC       all, >0 CRC   PASS
+R5   Unresponsive board verdict within budget    806 ms              <= 1300 ms    PASS
+R6   Speed-up with 8 stations                    4.6x                >= 4.0x       PASS
+R7   JSON report + CSV row for every unit        200/200, 200 rows   all           PASS
+R8   Test specification valid                    0 problems          0             PASS
+8/8 requirements pass

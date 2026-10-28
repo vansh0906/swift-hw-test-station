@@ -1,0 +1,40 @@
+name: hwtest-ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  swift:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Build
+        run: swift build -c release
+      - name: Self-tests (no XCTest needed)
+        run: swift run selftest
+      - name: Production benchmark and requirement table (fails if any requirement fails)
+        shell: bash
+        run: swift run -c release hwtest bench --units 200 --stations 8 | tee results.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results
+          path: |
+            results.txt
+            reports/bench/summary.csv
+
+  firmware:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: CRC vectors (Python reference)
+        run: python3 tools/crc8_vectors.py
+      - name: Firmware protocol tests on the host
+        run: |
+          cd firmware/host_test
+          g++ -std=c++17 -Wall -Wextra -Werror -o test_protocol test_protocol.cpp
+          ./test_protocol

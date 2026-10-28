@@ -1,0 +1,15 @@
+{
+  "product": "IMU-BOARD-A",
+  "timeoutMs": 200,
+  "retries": 3,
+  "steps": [
+    { "name": "identify",         "command": "ID?",       "check": "equals",  "key": "ID",   "fields": [0], "equals": "IMU-BOARD-A", "abortOnFail": true },
+    { "name": "firmware_version", "command": "ID?",       "check": "version", "key": "ID",   "fields": [1], "minVersion": "1.2.0" },
+    { "name": "supply_voltage",   "command": "READ VBUS", "check": "range",   "key": "VBUS", "fields": [0], "low": 3.2, "high": 3.4, "samples": 3, "unit": "V" },
+    { "name": "temperature",      "command": "READ TEMP", "check": "range",   "key": "TEMP", "fields": [0], "low": 0.0, "high": 60.0, "unit": "C" },
+    { "name": "accel_gravity",    "command": "READ ACC",  "check": "range",   "key": "ACC",  "fields": [2], "low": 9.0, "high": 10.6, "samples": 10, "unit": "m/s2" },
+    { "name": "accel_noise",      "command": "READ ACC",  "check": "noise",   "key": "ACC",  "fields": [0, 1, 2], "minStd": 0.002, "maxStd": 0.15, "samples": 20, "unit": "m/s2" },
+    { "name": "gyro_bias",        "command": "READ GYR",  "check": "range",   "key": "GYR",  "fields": [0, 1, 2], "low": -0.05, "high": 0.05, "samples": 5, "unit": "rad/s" },
+    { "name": "selftest",         "command": "SELFTEST",  "check": "equals",  "key": "ST",   "fields": [0], "equals": "PASS" }
+  ]
+}

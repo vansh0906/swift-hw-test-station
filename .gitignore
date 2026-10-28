@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+reports/
+*.xcodeproj
+firmware/host_test/test_protocol
+.DS_Store
